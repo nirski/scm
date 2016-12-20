@@ -1,0 +1,14 @@
+name: "my-website"
+navbar:
+    title: "My Website"
+    left:
+      - text: "Home"
+        href: index.html
+      - text: "About"
+        href: about.html
+output:
+    prettydoc::html_pretty:
+        theme: cayman
+        highlight: github
+        toc: yes
+output_dir: "."
