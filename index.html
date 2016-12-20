@@ -14,6 +14,12 @@
 
 <title>[edX] MITx: CTL.SC0x Supply Chain Analytics</title>
 
+<script src="site_libs/htmlwidgets-0.8/htmlwidgets.js"></script>
+<script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
+<script src="site_libs/datatables-binding-0.2/datatables.js"></script>
+<link href="site_libs/dt-core-1.10.12/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="site_libs/dt-core-1.10.12/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="site_libs/dt-core-1.10.12/js/jquery.dataTables.min.js"></script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -82,6 +88,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#part-2-of-boarding-pass-problem">Part 2 of Boarding Pass Problem</a></li>
 <li><a href="#part-3a-of-boarding-pass-problem">Part 3a of Boarding Pass Problem</a></li>
 <li><a href="#part-3b-of-boarding-pass-problem">Part 3b of Boarding Pass Problem</a></li>
+<li><a href="#problem-patches-beauty-salon">Problem: Patches Beauty Salon</a></li>
+<li><a href="#patches-beauty-salon-revisited">Patches Beauty Salon, Revisited</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -90,7 +98,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <section class="main-content">
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
 <span class="kw">library</span>(simmer)
-<span class="kw">library</span>(triangle)</code></pre></div>
+<span class="kw">library</span>(triangle)
+<span class="kw">library</span>(DT)</code></pre></div>
 <div id="week-7-building-descriptive-models-simulation" class="section level1">
 <h1>Week 7: Building Descriptive Models: Simulation</h1>
 <div id="lesson-1-simulation-basics" class="section level2">
@@ -144,49 +153,34 @@ logan &lt;-
 <span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer&quot;</span>, customer, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="dv">30</span>/<span class="dv">60</span>))</code></pre></div>
 <p>Model is run.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">run</span>(<span class="dt">until =</span> <span class="fl">9e4</span>)</code></pre></div>
-<pre><code>## simmer environment: Logan | now: 90000 | next: 90000.5616572975
-## { Resource: Kiosk | monitored: 1 | server status: 4(6) | queue status: 0(16) }
-## { Generator: Customer | monitored: 1 | n_generated: 44740 }</code></pre>
+<pre><code>## simmer environment: Logan | now: 90000 | next: 90000.1757631333
+## { Resource: Kiosk | monitored: 1 | server status: 3(6) | queue status: 0(16) }
+## { Generator: Customer | monitored: 1 | n_generated: 44870 }</code></pre>
 <p>Average times.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span>get_mon_arrivals %&gt;%
-<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">flow_time =</span> end_time -<span class="st"> </span>start_time, <span class="dt">waiting_time =</span> flow_time -<span class="st"> </span>activity_time) %&gt;%
-<span class="st">    </span><span class="kw">summarise_each</span>(<span class="kw">funs</span>(mean), flow_time, activity_time, waiting_time) %&gt;%
-<span class="st">    </span>knitr::kable</code></pre></div>
-<table>
-<thead>
-<tr class="header">
-<th align="right">flow_time</th>
-<th align="right">activity_time</th>
-<th align="right">waiting_time</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">7.103312</td>
-<td align="right">6.822238</td>
-<td align="right">0.2810747</td>
-</tr>
-</tbody>
-</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">average_times &lt;-<span class="st"> </span>function(m) {
+    m %&gt;%<span class="st"> </span><span class="kw">get_mon_arrivals</span>(<span class="dt">per_resource =</span> <span class="ot">TRUE</span>) %&gt;%
+<span class="st">        </span><span class="kw">mutate</span>(
+            <span class="dt">flow_time =</span> end_time -<span class="st"> </span>start_time,
+            <span class="dt">waiting_time =</span> flow_time -<span class="st"> </span>activity_time
+        ) %&gt;%
+<span class="st">        </span><span class="kw">group_by</span>(resource) %&gt;%
+<span class="st">        </span><span class="kw">summarise_each</span>(<span class="kw">funs</span>(mean), flow_time, activity_time, waiting_time) %&gt;%
+<span class="st">        </span><span class="kw">datatable</span>(<span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">dom =</span> <span class="st">&#39;t&#39;</span>)) %&gt;%<span class="st"> </span><span class="kw">formatRound</span>(<span class="dv">2</span>:<span class="dv">4</span>, <span class="dv">2</span>)
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span>average_times</code></pre></div>
+<div id="htmlwidget-4a937b4c8a15eaf2918d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4a937b4c8a15eaf2918d">{"x":{"filter":"none","data":[["1"],["Kiosk"],[7.12140694970828],[6.84147245215503],[0.27993449755325]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> \u003c/th>\n      <th>resource\u003c/th>\n      <th>flow_time\u003c/th>\n      <th>activity_time\u003c/th>\n      <th>waiting_time\u003c/th>\n    \u003c/tr>\n  \u003c/thead>\n\u003c/table>","options":{"dom":"t","columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"rowCallback":"function(row, data) {\nDTWidget.formatRound(this, row, data, 2, 2);\nDTWidget.formatRound(this, row, data, 3, 2);\nDTWidget.formatRound(this, row, data, 4, 2);\n}"}},"evals":["options.rowCallback"],"jsHooks":[]}</script>
 <p>How many passengers made it.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span>get_mon_arrivals %&gt;%
-<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">flow_time =</span> end_time -<span class="st"> </span>start_time, <span class="dt">waiting_time =</span> flow_time -<span class="st"> </span>activity_time) %&gt;%
-<span class="st">    </span><span class="kw">count</span>(finished) %&gt;%
-<span class="st">    </span>knitr::kable</code></pre></div>
-<table>
-<thead>
-<tr class="header">
-<th align="left">finished</th>
-<th align="right">n</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">TRUE</td>
-<td align="right">44735</td>
-</tr>
-</tbody>
-</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resource_popularity &lt;-<span class="st"> </span>function(m) {
+    m %&gt;%<span class="st"> </span><span class="kw">get_mon_arrivals</span>(<span class="dt">per_resource =</span> <span class="ot">TRUE</span>) %&gt;%
+<span class="st">        </span><span class="kw">group_by</span>(name) %&gt;%
+<span class="st">        </span><span class="kw">summarise</span>(<span class="dt">resource =</span> resource %&gt;%<span class="st"> </span><span class="kw">paste</span>(<span class="dt">collapse =</span> <span class="st">&quot; -&gt; &quot;</span>)) %&gt;%
+<span class="st">        </span><span class="kw">count</span>(resource) %&gt;%
+<span class="st">        </span><span class="kw">datatable</span>(<span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">dom =</span> <span class="st">&quot;t&quot;</span>))
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span>resource_popularity</code></pre></div>
+<div id="htmlwidget-083b8a48ee418dff42cd" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-083b8a48ee418dff42cd">{"x":{"filter":"none","data":[["1"],["Kiosk"],[44866]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> \u003c/th>\n      <th>resource\u003c/th>\n      <th>n\u003c/th>\n    \u003c/tr>\n  \u003c/thead>\n\u003c/table>","options":{"dom":"t","columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="recitation-1.2" class="section level4">
 <h4>Recitation 1.2</h4>
@@ -200,10 +194,10 @@ logan &lt;-
 <p>Waiting times.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">plot_evolution_arrival_times</span>(<span class="st">&quot;waiting_time&quot;</span>)</code></pre></div>
 <pre><code>## `geom_smooth()` using method = &#39;gam&#39;</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" /><!-- --></p>
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" /><!-- --></p>
 <p>Resource usage.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">plot_resource_usage</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dt">steps =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" /><!-- --></p>
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" /><!-- --></p>
 </div>
 <div id="recitation-1.3" class="section level4">
 <h4>Recitation 1.3</h4>
@@ -217,7 +211,7 @@ logan &lt;-
 <p>Resource utilization.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">plot_resource_utilization</span>(<span class="st">&quot;Kiosk&quot;</span>) +
 <span class="st">    </span><span class="kw">geom_label</span>(<span class="kw">aes</span>(<span class="dt">label =</span> Q50 %&gt;%<span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>), <span class="dt">y =</span> Q50, <span class="dt">x =</span> resource))</code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" /><!-- --></p>
+<p><img src="index_files/figure-html/unnamed-chunk-11-1.png" /><!-- --></p>
 </div>
 </div>
 <div id="part-2-of-boarding-pass-problem" class="section level3">
@@ -253,40 +247,14 @@ logan &lt;-
 <span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer&quot;</span>, customer, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="fl">0.5</span>))</code></pre></div>
 <p>Model is run.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">run</span>(<span class="dt">until =</span> <span class="fl">9e4</span>)</code></pre></div>
-<pre><code>## simmer environment: Logan | now: 90000 | next: 90000.1645318992
-## { Resource: Kiosk | monitored: 1 | server status: 2(6) | queue status: 0(16) }
+<pre><code>## simmer environment: Logan | now: 90000 | next: 90000.2498332999
+## { Resource: Kiosk | monitored: 1 | server status: 6(6) | queue status: 0(16) }
 ## { Resource: CSR | monitored: 1 | server status: 0(2) | queue status: 0(Inf) }
-## { Generator: Customer | monitored: 1 | n_generated: 44389 }</code></pre>
+## { Generator: Customer | monitored: 1 | n_generated: 45163 }</code></pre>
 <p>Average times.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">get_mon_arrivals</span>(<span class="dt">per_resource =</span> <span class="ot">TRUE</span>) %&gt;%
-<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">flow_time =</span> end_time -<span class="st"> </span>start_time, <span class="dt">waiting_time =</span> flow_time -<span class="st"> </span>activity_time) %&gt;%
-<span class="st">    </span><span class="kw">group_by</span>(resource) %&gt;%
-<span class="st">    </span><span class="kw">summarise_each</span>(<span class="kw">funs</span>(mean), flow_time, activity_time, waiting_time) %&gt;%
-<span class="st">    </span>knitr::kable</code></pre></div>
-<table>
-<thead>
-<tr class="header">
-<th align="left">resource</th>
-<th align="right">flow_time</th>
-<th align="right">activity_time</th>
-<th align="right">waiting_time</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">CSR</td>
-<td align="right">6.329307</td>
-<td align="right">5.996547</td>
-<td align="right">0.3327607</td>
-</tr>
-<tr class="even">
-<td align="left">Kiosk</td>
-<td align="right">6.928090</td>
-<td align="right">6.839436</td>
-<td align="right">0.0886546</td>
-</tr>
-</tbody>
-</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span>average_times</code></pre></div>
+<div id="htmlwidget-3c11391ac2ca6962a152" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3c11391ac2ca6962a152">{"x":{"filter":"none","data":[["1","2"],["CSR","Kiosk"],[6.34911603586077,6.92172041008313],[6.00253766638052,6.8277592800619],[0.346578369480249,0.0939611300212324]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> \u003c/th>\n      <th>resource\u003c/th>\n      <th>flow_time\u003c/th>\n      <th>activity_time\u003c/th>\n      <th>waiting_time\u003c/th>\n    \u003c/tr>\n  \u003c/thead>\n\u003c/table>","options":{"dom":"t","columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"rowCallback":"function(row, data) {\nDTWidget.formatRound(this, row, data, 2, 2);\nDTWidget.formatRound(this, row, data, 3, 2);\nDTWidget.formatRound(this, row, data, 4, 2);\n}"}},"evals":["options.rowCallback"],"jsHooks":[]}</script>
 </div>
 </div>
 <div id="part-3a-of-boarding-pass-problem" class="section level3">
@@ -324,53 +292,197 @@ logan &lt;-
 <span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer&quot;</span>, customer, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="fl">0.5</span>))</code></pre></div>
 <p>Model is run.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">run</span>(<span class="dt">until =</span> <span class="fl">9e4</span>)</code></pre></div>
-<pre><code>## simmer environment: Logan | now: 90000 | next: 90000.2151493929
-## { Resource: Kiosk | monitored: 1 | server status: 3(6) | queue status: 0(16) }
-## { Resource: CSR | monitored: 1 | server status: 1(2) | queue status: 0(Inf) }
-## { Generator: Customer | monitored: 1 | n_generated: 45001 }</code></pre>
+<pre><code>## simmer environment: Logan | now: 90000 | next: 90000.045264714
+## { Resource: Kiosk | monitored: 1 | server status: 4(6) | queue status: 0(16) }
+## { Resource: CSR | monitored: 1 | server status: 0(2) | queue status: 0(Inf) }
+## { Generator: Customer | monitored: 1 | n_generated: 45020 }</code></pre>
 <p>How many people benefited from the redirecting technology?</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">get_mon_arrivals</span>(<span class="dt">per_resource =</span> <span class="ot">TRUE</span>) %&gt;%
-<span class="st">    </span><span class="kw">mutate</span>(
-        <span class="dt">flow_time =</span> end_time -<span class="st"> </span>start_time,
-        <span class="dt">waiting_time =</span> flow_time -<span class="st"> </span>activity_time
-    ) %&gt;%
-<span class="st">    </span><span class="kw">spread</span>(resource, replication) %&gt;%
-<span class="st">    </span><span class="kw">group_by</span>(name) %&gt;%
-<span class="st">    </span><span class="kw">summarise_each</span>(
-        <span class="kw">funs</span>(<span class="kw">sum</span>(., <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)),
-        flow_time, activity_time, waiting_time, CSR, Kiosk
-    ) %&gt;%
-<span class="st">    </span><span class="kw">with</span>(., <span class="kw">table</span>(CSR, Kiosk)) %&gt;%
-<span class="st">    </span>knitr::kable</code></pre></div>
-<table>
-<thead>
-<tr class="header">
-<th></th>
-<th align="right">0</th>
-<th align="right">1</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>0</td>
-<td align="right">0</td>
-<td align="right">35947</td>
-</tr>
-<tr class="even">
-<td>1</td>
-<td align="right">9008</td>
-<td align="right">41</td>
-</tr>
-</tbody>
-</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># logan %&gt;% get_mon_arrivals %&gt;% count(finished)</span>
+logan %&gt;%<span class="st"> </span>resource_popularity</code></pre></div>
+<div id="htmlwidget-5b5b07375ef056414114" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5b5b07375ef056414114">{"x":{"filter":"none","data":[["1","2","3"],["CSR","Kiosk","Kiosk -&gt; CSR"],[8972,36000,43]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> \u003c/th>\n      <th>resource\u003c/th>\n      <th>n\u003c/th>\n    \u003c/tr>\n  \u003c/thead>\n\u003c/table>","options":{"dom":"t","columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div id="part-3b-of-boarding-pass-problem" class="section level3">
 <h3>Part 3b of Boarding Pass Problem</h3>
+<div id="recitation-1.5-1" class="section level4">
+<h4>Recitation 1.5</h4>
 <ol start="28" style="list-style-type: decimal">
 <li>Define a timeout in the Service</li>
 <li>Run the model</li>
 </ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">customer_manager &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>(<span class="st">&quot;Manager path&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Manager&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Manager&quot;</span>, <span class="dv">1</span>)
+
+customer_csr &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>(<span class="st">&quot;CSR path&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">renege_in</span>(<span class="dv">30</span>, customer_manager) %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;CSR&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">renege_abort</span>() %&gt;%
+<span class="st">    </span><span class="kw">timeout</span>(function() <span class="kw">rtriangle</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">6</span>)) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;CSR&quot;</span>, <span class="dv">1</span>)
+
+customer_kiosk &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>(<span class="st">&quot;Kiosk path&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">renege_in</span>(<span class="dv">5</span>, customer_csr) %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">renege_abort</span>() %&gt;%
+<span class="st">    </span><span class="kw">timeout</span>(function() <span class="kw">rtriangle</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="dv">15</span>, <span class="dv">5</span>)) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">1</span>)
+
+customer &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>(<span class="st">&quot;Customer&#39;s path&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">branch</span>(
+        <span class="dt">option =</span> function() <span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">2</span>, <span class="dv">1</span>, <span class="dt">prob =</span> <span class="kw">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)),
+        <span class="dt">continue =</span> <span class="kw">c</span>(F, F),
+        customer_kiosk,
+        customer_csr
+    )
+
+logan &lt;-
+<span class="st">    </span><span class="kw">simmer</span>(<span class="st">&quot;Logan&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">6</span>, <span class="dv">16</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;CSR&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Manager&quot;</span>, <span class="ot">Inf</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer&quot;</span>, customer, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="fl">0.5</span>))</code></pre></div>
+<p>Model is run.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">run</span>(<span class="dt">until =</span> <span class="fl">9e4</span>)</code></pre></div>
+<pre><code>## simmer environment: Logan | now: 90000 | next: 90000.9969563981
+## { Resource: Kiosk | monitored: 1 | server status: 2(6) | queue status: 0(16) }
+## { Resource: CSR | monitored: 1 | server status: 0(1) | queue status: 0(Inf) }
+## { Resource: Manager | monitored: 1 | server status: 0(Inf) | queue status: 0(Inf) }
+## { Generator: Customer | monitored: 1 | n_generated: 45169 }</code></pre>
+<p>How many people asked to talk with a manager?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span>resource_popularity</code></pre></div>
+<div id="htmlwidget-cb4d6d665798d4c82fd9" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-cb4d6d665798d4c82fd9">{"x":{"filter":"none","data":[["1","2","3","4","5"],["CSR","CSR -&gt; Manager","Kiosk","Kiosk -&gt; CSR","Kiosk -&gt; CSR -&gt; Manager"],[9123,36,35964,40,3]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> \u003c/th>\n      <th>resource\u003c/th>\n      <th>n\u003c/th>\n    \u003c/tr>\n  \u003c/thead>\n\u003c/table>","options":{"dom":"t","columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="problem-patches-beauty-salon" class="section level3">
+<h3>Problem: Patches Beauty Salon</h3>
+<div id="recitation-2.1" class="section level4">
+<h4>Recitation 2.1</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">customer_baths &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>() %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Tub&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Staff&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">timeout</span>(function() <span class="kw">rtriangle</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">15</span>, <span class="dv">10</span>)) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Staff&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Tub&quot;</span>, <span class="dv">1</span>)
+
+customer_nails &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>() %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Table&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Staff&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">timeout</span>(function() <span class="kw">rtriangle</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">7</span>, <span class="dv">5</span>)) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Staff&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Table&quot;</span>, <span class="dv">1</span>)
+
+customer_dog &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>() %&gt;%
+<span class="st">    </span><span class="kw">branch</span>(
+        <span class="dt">option =</span> function() <span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">2</span>, <span class="dv">1</span>, <span class="dt">prob =</span> <span class="kw">c</span>(<span class="fl">0.7</span>, <span class="fl">0.3</span>)),
+        <span class="dt">continue =</span> <span class="kw">c</span>(F, F), customer_baths, customer_nails
+    )
+
+customer_cat &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>() %&gt;%
+<span class="st">    </span><span class="kw">branch</span>(
+        <span class="dt">option =</span> function() <span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">2</span>, <span class="dv">1</span>, <span class="dt">prob =</span> <span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>)),
+        <span class="dt">continue =</span> <span class="kw">c</span>(F, F), customer_baths, customer_nails
+    )
+
+patches &lt;-
+<span class="st">    </span><span class="kw">simmer</span>(<span class="st">&quot;Patches&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Staff&quot;</span>, <span class="dv">7</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Tub&quot;</span>, <span class="dv">4</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Table&quot;</span>, <span class="dv">3</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer dog&quot;</span>, customer_dog, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="dv">20</span>/<span class="dv">60</span>)) %&gt;%
+<span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer cat&quot;</span>, customer_cat, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="dv">20</span>/<span class="dv">60</span>))</code></pre></div>
+<p>Model is run.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">patches %&gt;%<span class="st"> </span><span class="kw">run</span>(<span class="dt">until =</span> <span class="dv">70000</span>)</code></pre></div>
+<pre><code>## simmer environment: Patches | now: 70000 | next: 70000.315183981
+## { Resource: Staff | monitored: 1 | server status: 4(7) | queue status: 0(Inf) }
+## { Resource: Tub | monitored: 1 | server status: 4(4) | queue status: 0(Inf) }
+## { Resource: Table | monitored: 1 | server status: 0(3) | queue status: 0(Inf) }
+## { Generator: Customer dog | monitored: 1 | n_generated: 23015 }
+## { Generator: Customer cat | monitored: 1 | n_generated: 23188 }</code></pre>
+<p>What is the utilization of:</p>
+<ol style="list-style-type: lower-alpha">
+<li>the staff?</li>
+<li>the tubs?</li>
+<li>the tables?</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">patches %&gt;%<span class="st"> </span><span class="kw">plot_resource_utilization</span>(<span class="kw">c</span>(<span class="st">&quot;Staff&quot;</span>, <span class="st">&quot;Tub&quot;</span>, <span class="st">&quot;Table&quot;</span>)) +
+<span class="st">    </span><span class="kw">geom_label</span>(<span class="kw">aes</span>(<span class="dt">label =</span> Q50 %&gt;%<span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>), <span class="dt">y =</span> Q50, <span class="dt">x =</span> resource))</code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-23-1.png" /><!-- --></p>
+<p>What is the average time required (incl. waiting in line) for:</p>
+<ol style="list-style-type: lower-alpha">
+<li>a beauty bath?</li>
+<li>having your nails polished?</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">patches %&gt;%<span class="st"> </span>average_times</code></pre></div>
+<div id="htmlwidget-f13bfe402c6e695e84a2" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f13bfe402c6e695e84a2">{"x":{"filter":"none","data":[["1","2","3"],["Staff","Table","Tub"],[6.99356788872144,6.13583068801184,11.5205069441006],[6.99356788872144,4.99828533714103,9.99265399965513],[6.17775896075811e-016,1.13754535087081,1.52785294444547]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> \u003c/th>\n      <th>resource\u003c/th>\n      <th>flow_time\u003c/th>\n      <th>activity_time\u003c/th>\n      <th>waiting_time\u003c/th>\n    \u003c/tr>\n  \u003c/thead>\n\u003c/table>","options":{"dom":"t","columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"rowCallback":"function(row, data) {\nDTWidget.formatRound(this, row, data, 2, 2);\nDTWidget.formatRound(this, row, data, 3, 2);\nDTWidget.formatRound(this, row, data, 4, 2);\n}"}},"evals":["options.rowCallback"],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="patches-beauty-salon-revisited" class="section level3">
+<h3>Patches Beauty Salon, Revisited</h3>
+<div id="recitation-2.2" class="section level4">
+<h4>Recitation 2.2</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">customer_baths &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>() %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Tub&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Staff&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">timeout</span>(function() <span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>)) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Staff&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Tub&quot;</span>, <span class="dv">1</span>)
+
+customer_nails &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>() %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Table&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Staff&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">timeout</span>(function() <span class="kw">runif</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">7</span>)) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Staff&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Table&quot;</span>, <span class="dv">1</span>)
+
+customer_dog &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>() %&gt;%
+<span class="st">    </span><span class="kw">branch</span>(
+        <span class="dt">option =</span> function() <span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">2</span>, <span class="dv">1</span>, <span class="dt">prob =</span> <span class="kw">c</span>(<span class="fl">0.7</span>, <span class="fl">0.3</span>)),
+        <span class="dt">continue =</span> <span class="kw">c</span>(F, F), customer_baths, customer_nails
+    )
+
+customer_cat &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>() %&gt;%
+<span class="st">    </span><span class="kw">branch</span>(
+        <span class="dt">option =</span> function() <span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">2</span>, <span class="dv">1</span>, <span class="dt">prob =</span> <span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>)),
+        <span class="dt">continue =</span> <span class="kw">c</span>(F, F), customer_baths, customer_nails
+    )
+
+patches &lt;-
+<span class="st">    </span><span class="kw">simmer</span>(<span class="st">&quot;Patches&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Staff&quot;</span>, <span class="dv">7</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Tub&quot;</span>, <span class="dv">4</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Table&quot;</span>, <span class="dv">3</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer dog&quot;</span>, customer_dog, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="dv">20</span>/<span class="dv">60</span>)) %&gt;%
+<span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer cat&quot;</span>, customer_cat, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="dv">20</span>/<span class="dv">60</span>))</code></pre></div>
+<p>Model is run.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">patches %&gt;%<span class="st"> </span><span class="kw">run</span>(<span class="dt">until =</span> <span class="dv">70000</span>)</code></pre></div>
+<pre><code>## simmer environment: Patches | now: 70000 | next: 70000.3948437338
+## { Resource: Staff | monitored: 1 | server status: 4(7) | queue status: 0(Inf) }
+## { Resource: Tub | monitored: 1 | server status: 1(4) | queue status: 0(Inf) }
+## { Resource: Table | monitored: 1 | server status: 3(3) | queue status: 0(Inf) }
+## { Generator: Customer dog | monitored: 1 | n_generated: 23339 }
+## { Generator: Customer cat | monitored: 1 | n_generated: 23585 }</code></pre>
+<p>What is the utilization of:</p>
+<ol style="list-style-type: lower-alpha">
+<li>the staff?</li>
+<li>the tubs?</li>
+<li>the tables?</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">patches %&gt;%<span class="st"> </span><span class="kw">plot_resource_utilization</span>(<span class="kw">c</span>(<span class="st">&quot;Staff&quot;</span>, <span class="st">&quot;Tub&quot;</span>, <span class="st">&quot;Table&quot;</span>)) +
+<span class="st">    </span><span class="kw">geom_label</span>(<span class="kw">aes</span>(<span class="dt">label =</span> Q50 %&gt;%<span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>), <span class="dt">y =</span> Q50, <span class="dt">x =</span> resource))</code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" /><!-- --></p>
+<p>What is the average time required (incl. waiting in line) for:</p>
+<ol style="list-style-type: lower-alpha">
+<li>a beauty bath?</li>
+<li>having your nails polished?</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">patches %&gt;%<span class="st"> </span>average_times</code></pre></div>
+<div id="htmlwidget-6dee9a5fe0b34a32eb1d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6dee9a5fe0b34a32eb1d">{"x":{"filter":"none","data":[["1","2","3"],["Staff","Table","Tub"],[7.0072740934523,6.18800679401933,11.8723442839912],[7.0072740934523,5.00599704559624,9.98351594568691],[-5.66720605110246e-016,1.18200974842309,1.88882833830427]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> \u003c/th>\n      <th>resource\u003c/th>\n      <th>flow_time\u003c/th>\n      <th>activity_time\u003c/th>\n      <th>waiting_time\u003c/th>\n    \u003c/tr>\n  \u003c/thead>\n\u003c/table>","options":{"dom":"t","columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"rowCallback":"function(row, data) {\nDTWidget.formatRound(this, row, data, 2, 2);\nDTWidget.formatRound(this, row, data, 3, 2);\nDTWidget.formatRound(this, row, data, 4, 2);\n}"}},"evals":["options.rowCallback"],"jsHooks":[]}</script>
+</div>
 </div>
 </div>
 </div>
