@@ -12,10 +12,48 @@
 
 
 
-<title>My Website</title>
+<title>[edX] MITx: CTL.SC0x Supply Chain Analytics</title>
 
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
 
 
 
@@ -29,13 +67,313 @@
 
 
 <section class="page-header">
-<h1 class="title toc-ignore project-name">My Website</h1>
+<h1 class="title toc-ignore project-name">[edX] MITx: CTL.SC0x<br>Supply Chain Analytics</h1>
 </section>
 
 
+<div id="TOC" class="toc">
+<ul>
+<li><a href="#week-7-building-descriptive-models-simulation">Week 7: Building Descriptive Models: Simulation</a><ul>
+<li><a href="#lesson-1-simulation-basics">Lesson 1: Simulation Basics</a><ul>
+<li><a href="#qq6">QQ6</a></li>
+</ul></li>
+<li><a href="#recitations">Recitations</a><ul>
+<li><a href="#problem-boarding-pass-kiosks-at-logan">Problem: Boarding Pass Kiosks at Logan</a></li>
+<li><a href="#part-2-of-boarding-pass-problem">Part 2 of Boarding Pass Problem</a></li>
+<li><a href="#part-3a-of-boarding-pass-problem">Part 3a of Boarding Pass Problem</a></li>
+<li><a href="#part-3b-of-boarding-pass-problem">Part 3b of Boarding Pass Problem</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
 
 <section class="main-content">
-<p>Hello, Website!</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
+<span class="kw">library</span>(simmer)
+<span class="kw">library</span>(triangle)</code></pre></div>
+<div id="week-7-building-descriptive-models-simulation" class="section level1">
+<h1>Week 7: Building Descriptive Models: Simulation</h1>
+<div id="lesson-1-simulation-basics" class="section level2">
+<h2>Lesson 1: Simulation Basics</h2>
+<div id="qq6" class="section level3">
+<h3>QQ6</h3>
+<p>What is the quantity of rolls that Suzie should make each day in order to maximize profitability? Assume that the underlying demand ~N(20,5). Round your answer to the closest integer.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># set.seed(4)</span>
+
+<span class="kw">data_frame</span>(
+    <span class="dt">production =</span> <span class="kw">rep</span>(<span class="dv">1</span>:<span class="dv">40</span>, <span class="dt">each =</span> <span class="fl">1e4</span>),
+    <span class="dt">demand =</span> <span class="kw">rnorm</span>(<span class="fl">40e4</span>, <span class="dv">20</span>, <span class="dv">5</span>) %&gt;%<span class="st"> </span>round,
+    <span class="dt">revenue =</span> <span class="kw">pmin</span>(production, demand) *<span class="st"> </span><span class="dv">80</span>,
+    <span class="dt">cost =</span> production *<span class="st"> </span><span class="dv">25</span>,
+    <span class="dt">profit =</span> revenue -<span class="st"> </span>cost
+    ) %&gt;%
+<span class="st">    </span><span class="kw">group_by</span>(production) %&gt;%
+<span class="st">    </span><span class="kw">summarise_each</span>(<span class="kw">funs</span>(mean)) %&gt;%
+<span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(production, profit)) +
+<span class="st">    </span><span class="kw">geom_col</span>()</code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" /><!-- --></p>
+</div>
+</div>
+<div id="recitations" class="section level2">
+<h2>Recitations</h2>
+<div id="problem-boarding-pass-kiosks-at-logan" class="section level3">
+<h3>Problem: Boarding Pass Kiosks at Logan</h3>
+<div id="recitation-1.1" class="section level4">
+<h4>Recitation 1.1</h4>
+<ol style="list-style-type: decimal">
+<li>Create a new model</li>
+<li>Create a Source for passengers</li>
+<li>Create a Sink for passengers to exit</li>
+<li>Specify the length of the simulation</li>
+<li>Run the model</li>
+<li>Create a Delay for kiosk use</li>
+<li>Create a Queue for waiting</li>
+<li>Run the model</li>
+<li>Let’s measure time in the queue</li>
+<li>Run the model</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">customer &lt;-
+<span class="st">    </span><span class="kw">create_trajectory</span>(<span class="st">&quot;Customer&#39;s path&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">timeout</span>(function() <span class="kw">rtriangle</span>(<span class="dv">1</span>, <span class="dt">a =</span> <span class="fl">0.5</span>, <span class="dt">b =</span> <span class="dv">15</span>, <span class="dt">c =</span> <span class="dv">5</span>)) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">1</span>)
+
+logan &lt;-
+<span class="st">    </span><span class="kw">simmer</span>(<span class="st">&quot;Logan&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">6</span>, <span class="dv">16</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer&quot;</span>, customer, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="dv">30</span>/<span class="dv">60</span>))</code></pre></div>
+<p>Model is run.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">run</span>(<span class="dt">until =</span> <span class="fl">9e4</span>)</code></pre></div>
+<pre><code>## simmer environment: Logan | now: 90000 | next: 90000.5616572975
+## { Resource: Kiosk | monitored: 1 | server status: 4(6) | queue status: 0(16) }
+## { Generator: Customer | monitored: 1 | n_generated: 44740 }</code></pre>
+<p>Average times.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span>get_mon_arrivals %&gt;%
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">flow_time =</span> end_time -<span class="st"> </span>start_time, <span class="dt">waiting_time =</span> flow_time -<span class="st"> </span>activity_time) %&gt;%
+<span class="st">    </span><span class="kw">summarise_each</span>(<span class="kw">funs</span>(mean), flow_time, activity_time, waiting_time) %&gt;%
+<span class="st">    </span>knitr::kable</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">flow_time</th>
+<th align="right">activity_time</th>
+<th align="right">waiting_time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7.103312</td>
+<td align="right">6.822238</td>
+<td align="right">0.2810747</td>
+</tr>
+</tbody>
+</table>
+<p>How many passengers made it.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span>get_mon_arrivals %&gt;%
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">flow_time =</span> end_time -<span class="st"> </span>start_time, <span class="dt">waiting_time =</span> flow_time -<span class="st"> </span>activity_time) %&gt;%
+<span class="st">    </span><span class="kw">count</span>(finished) %&gt;%
+<span class="st">    </span>knitr::kable</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">finished</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="right">44735</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="recitation-1.2" class="section level4">
+<h4>Recitation 1.2</h4>
+<ol start="11" style="list-style-type: decimal">
+<li>Create a Time Plot for queue size</li>
+<li>Change the queue capacity</li>
+<li>Run the model</li>
+<li>Scaling the Time Plot</li>
+<li>Run the model</li>
+</ol>
+<p>Waiting times.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">plot_evolution_arrival_times</span>(<span class="st">&quot;waiting_time&quot;</span>)</code></pre></div>
+<pre><code>## `geom_smooth()` using method = &#39;gam&#39;</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" /><!-- --></p>
+<p>Resource usage.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">plot_resource_usage</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dt">steps =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" /><!-- --></p>
+</div>
+<div id="recitation-1.3" class="section level4">
+<h4>Recitation 1.3</h4>
+<ol start="16" style="list-style-type: decimal">
+<li>Create a Resource Pool</li>
+<li>Replacing the queue with a Seize</li>
+<li>Add a Release when done</li>
+<li>Relax capacity at delay</li>
+<li>Run the model</li>
+</ol>
+<p>Resource utilization.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">plot_resource_utilization</span>(<span class="st">&quot;Kiosk&quot;</span>) +
+<span class="st">    </span><span class="kw">geom_label</span>(<span class="kw">aes</span>(<span class="dt">label =</span> Q50 %&gt;%<span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>), <span class="dt">y =</span> Q50, <span class="dt">x =</span> resource))</code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" /><!-- --></p>
+</div>
+</div>
+<div id="part-2-of-boarding-pass-problem" class="section level3">
+<h3>Part 2 of Boarding Pass Problem</h3>
+<div id="recitation-1.4" class="section level4">
+<h4>Recitation 1.4</h4>
+<ol start="21" style="list-style-type: decimal">
+<li>Create a Select Output</li>
+<li>Create a Resource Pool for CSRs</li>
+<li>Add a Service for seeing the CSRs</li>
+<li>Let’s measure time in the service</li>
+<li>Run the model</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">customer &lt;-
+<span class="st">    </span><span class="kw">create_trajectory</span>(<span class="st">&quot;Customer&#39;s path&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">branch</span>(
+        <span class="dt">option =</span> function() <span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">2</span>, <span class="dv">1</span>, <span class="dt">prob =</span> <span class="kw">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)),
+        <span class="dt">continue =</span> <span class="kw">c</span>(F, F),
+        <span class="kw">create_trajectory</span>(<span class="st">&quot;Kiosk path&quot;</span>) %&gt;%
+<span class="st">            </span><span class="kw">seize</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">            </span><span class="kw">timeout</span>(function() <span class="kw">rtriangle</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="dv">15</span>, <span class="dv">5</span>)) %&gt;%
+<span class="st">            </span><span class="kw">release</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">1</span>),
+        <span class="kw">create_trajectory</span>(<span class="st">&quot;CSR path&quot;</span>) %&gt;%
+<span class="st">            </span><span class="kw">seize</span>(<span class="st">&quot;CSR&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">            </span><span class="kw">timeout</span>(function() <span class="kw">rtriangle</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">6</span>)) %&gt;%
+<span class="st">            </span><span class="kw">release</span>(<span class="st">&quot;CSR&quot;</span>, <span class="dv">1</span>)
+    )
+
+logan &lt;-
+<span class="st">    </span><span class="kw">simmer</span>(<span class="st">&quot;Logan&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">6</span>, <span class="dv">16</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;CSR&quot;</span>, <span class="dv">2</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer&quot;</span>, customer, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="fl">0.5</span>))</code></pre></div>
+<p>Model is run.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">run</span>(<span class="dt">until =</span> <span class="fl">9e4</span>)</code></pre></div>
+<pre><code>## simmer environment: Logan | now: 90000 | next: 90000.1645318992
+## { Resource: Kiosk | monitored: 1 | server status: 2(6) | queue status: 0(16) }
+## { Resource: CSR | monitored: 1 | server status: 0(2) | queue status: 0(Inf) }
+## { Generator: Customer | monitored: 1 | n_generated: 44389 }</code></pre>
+<p>Average times.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">get_mon_arrivals</span>(<span class="dt">per_resource =</span> <span class="ot">TRUE</span>) %&gt;%
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">flow_time =</span> end_time -<span class="st"> </span>start_time, <span class="dt">waiting_time =</span> flow_time -<span class="st"> </span>activity_time) %&gt;%
+<span class="st">    </span><span class="kw">group_by</span>(resource) %&gt;%
+<span class="st">    </span><span class="kw">summarise_each</span>(<span class="kw">funs</span>(mean), flow_time, activity_time, waiting_time) %&gt;%
+<span class="st">    </span>knitr::kable</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">resource</th>
+<th align="right">flow_time</th>
+<th align="right">activity_time</th>
+<th align="right">waiting_time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">CSR</td>
+<td align="right">6.329307</td>
+<td align="right">5.996547</td>
+<td align="right">0.3327607</td>
+</tr>
+<tr class="even">
+<td align="left">Kiosk</td>
+<td align="right">6.928090</td>
+<td align="right">6.839436</td>
+<td align="right">0.0886546</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="part-3a-of-boarding-pass-problem" class="section level3">
+<h3>Part 3a of Boarding Pass Problem</h3>
+<div id="recitation-1.5" class="section level4">
+<h4>Recitation 1.5</h4>
+<ol start="26" style="list-style-type: decimal">
+<li>Define a timeout in the Seize</li>
+<li>Run the model</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">customer_csr &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>(<span class="st">&quot;CSR path&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;CSR&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">timeout</span>(function() <span class="kw">rtriangle</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">6</span>)) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;CSR&quot;</span>, <span class="dv">1</span>)
+
+customer_kiosk &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>(<span class="st">&quot;Kiosk path&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">renege_in</span>(<span class="dv">5</span>, customer_csr) %&gt;%
+<span class="st">    </span><span class="kw">seize</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">1</span>) %&gt;%
+<span class="st">    </span><span class="kw">renege_abort</span>() %&gt;%
+<span class="st">    </span><span class="kw">timeout</span>(function() <span class="kw">rtriangle</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="dv">15</span>, <span class="dv">5</span>)) %&gt;%
+<span class="st">    </span><span class="kw">release</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">1</span>)
+
+customer &lt;-<span class="st"> </span><span class="kw">create_trajectory</span>(<span class="st">&quot;Customer&#39;s path&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">branch</span>(
+        <span class="dt">option =</span> function() <span class="kw">sample</span>(<span class="dv">1</span>:<span class="dv">2</span>, <span class="dv">1</span>, <span class="dt">prob =</span> <span class="kw">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>)),
+        <span class="dt">continue =</span> <span class="kw">c</span>(F, F),
+        customer_kiosk,
+        customer_csr
+    )
+
+logan &lt;-
+<span class="st">    </span><span class="kw">simmer</span>(<span class="st">&quot;Logan&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;Kiosk&quot;</span>, <span class="dv">6</span>, <span class="dv">16</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_resource</span>(<span class="st">&quot;CSR&quot;</span>, <span class="dv">2</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_generator</span>(<span class="st">&quot;Customer&quot;</span>, customer, function() <span class="kw">rexp</span>(<span class="dv">1</span>, <span class="fl">0.5</span>))</code></pre></div>
+<p>Model is run.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">run</span>(<span class="dt">until =</span> <span class="fl">9e4</span>)</code></pre></div>
+<pre><code>## simmer environment: Logan | now: 90000 | next: 90000.2151493929
+## { Resource: Kiosk | monitored: 1 | server status: 3(6) | queue status: 0(16) }
+## { Resource: CSR | monitored: 1 | server status: 1(2) | queue status: 0(Inf) }
+## { Generator: Customer | monitored: 1 | n_generated: 45001 }</code></pre>
+<p>How many people benefited from the redirecting technology?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logan %&gt;%<span class="st"> </span><span class="kw">get_mon_arrivals</span>(<span class="dt">per_resource =</span> <span class="ot">TRUE</span>) %&gt;%
+<span class="st">    </span><span class="kw">mutate</span>(
+        <span class="dt">flow_time =</span> end_time -<span class="st"> </span>start_time,
+        <span class="dt">waiting_time =</span> flow_time -<span class="st"> </span>activity_time
+    ) %&gt;%
+<span class="st">    </span><span class="kw">spread</span>(resource, replication) %&gt;%
+<span class="st">    </span><span class="kw">group_by</span>(name) %&gt;%
+<span class="st">    </span><span class="kw">summarise_each</span>(
+        <span class="kw">funs</span>(<span class="kw">sum</span>(., <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)),
+        flow_time, activity_time, waiting_time, CSR, Kiosk
+    ) %&gt;%
+<span class="st">    </span><span class="kw">with</span>(., <span class="kw">table</span>(CSR, Kiosk)) %&gt;%
+<span class="st">    </span>knitr::kable</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">0</th>
+<th align="right">1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td align="right">0</td>
+<td align="right">35947</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td align="right">9008</td>
+<td align="right">41</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="part-3b-of-boarding-pass-problem" class="section level3">
+<h3>Part 3b of Boarding Pass Problem</h3>
+<ol start="28" style="list-style-type: decimal">
+<li>Define a timeout in the Service</li>
+<li>Run the model</li>
+</ol>
+</div>
+</div>
+</div>
 </section>
 
 

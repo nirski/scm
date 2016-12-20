@@ -1,5 +1,235 @@
 ---
-title: "My Website"
+title: "[edX] MITx: CTL.SC0x<br>Supply Chain Analytics"
 ---
 
-Hello, Website!
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(simmer)
+library(triangle)
+```
+
+# Week 7: Building Descriptive Models: Simulation
+
+## Lesson 1: Simulation Basics
+
+### QQ6
+
+What is the quantity of rolls that Suzie should make each day in order to maximize profitability? Assume that the underlying demand ~N(20,5). Round your answer to the closest integer.
+
+```{r}
+# set.seed(4)
+
+data_frame(
+    production = rep(1:40, each = 1e4),
+    demand = rnorm(40e4, 20, 5) %>% round,
+    revenue = pmin(production, demand) * 80,
+    cost = production * 25,
+    profit = revenue - cost
+    ) %>%
+    group_by(production) %>%
+    summarise_each(funs(mean)) %>%
+    ggplot(aes(production, profit)) +
+    geom_col()
+```
+
+## Recitations
+
+### Problem: Boarding Pass Kiosks at Logan
+
+#### Recitation 1.1
+
+1. Create a new model
+2. Create a Source for passengers
+3. Create a Sink for passengers to exit
+4. Specify the length of the simulation
+5. Run the model
+6. Create a Delay for kiosk use
+7. Create a Queue for waiting
+8. Run the model
+9. Let’s measure time in the queue
+10. Run the model
+
+```{r}
+customer <-
+    create_trajectory("Customer's path") %>%
+    seize("Kiosk", 1) %>%
+    timeout(function() rtriangle(1, a = 0.5, b = 15, c = 5)) %>%
+    release("Kiosk", 1)
+
+logan <-
+    simmer("Logan") %>%
+    add_resource("Kiosk", 6, 16) %>%
+    add_generator("Customer", customer, function() rexp(1, 30/60))
+```
+
+Model is run.
+
+```{r}
+logan %>% run(until = 9e4)
+```
+
+Average times.
+
+```{r}
+logan %>% get_mon_arrivals %>%
+    mutate(flow_time = end_time - start_time, waiting_time = flow_time - activity_time) %>%
+    summarise_each(funs(mean), flow_time, activity_time, waiting_time) %>%
+    knitr::kable
+```
+
+How many passengers made it.
+
+```{r}
+logan %>% get_mon_arrivals %>%
+    mutate(flow_time = end_time - start_time, waiting_time = flow_time - activity_time) %>%
+    count(finished) %>%
+    knitr::kable
+```
+
+#### Recitation 1.2
+
+11. Create a Time Plot for queue size
+12. Change the queue capacity
+13. Run the model
+14. Scaling the Time Plot
+15. Run the model
+
+Waiting times.
+
+```{r}
+logan %>% plot_evolution_arrival_times("waiting_time")
+```
+
+Resource usage.
+
+```{r}
+logan %>% plot_resource_usage("Kiosk", steps = TRUE)
+```
+
+#### Recitation 1.3
+
+16. Create a Resource Pool
+17. Replacing the queue with a Seize
+18. Add a Release when done
+19. Relax capacity at delay
+20. Run the model
+
+Resource utilization.
+
+```{r}
+logan %>% plot_resource_utilization("Kiosk") +
+    geom_label(aes(label = Q50 %>% round(2), y = Q50, x = resource))
+```
+
+### Part 2 of Boarding Pass Problem
+
+#### Recitation 1.4
+
+21. Create a Select Output
+22. Create a Resource Pool for CSRs
+23. Add a Service for seeing the CSRs
+24. Let’s measure time in the service
+25. Run the model
+
+```{r}
+customer <-
+    create_trajectory("Customer's path") %>%
+    branch(
+        option = function() sample(1:2, 1, prob = c(0.8, 0.2)),
+        continue = c(F, F),
+        create_trajectory("Kiosk path") %>%
+            seize("Kiosk", 1) %>%
+            timeout(function() rtriangle(1, 0.5, 15, 5)) %>%
+            release("Kiosk", 1),
+        create_trajectory("CSR path") %>%
+            seize("CSR", 1) %>%
+            timeout(function() rtriangle(1, 3, 9, 6)) %>%
+            release("CSR", 1)
+    )
+
+logan <-
+    simmer("Logan") %>%
+    add_resource("Kiosk", 6, 16) %>%
+    add_resource("CSR", 2) %>%
+    add_generator("Customer", customer, function() rexp(1, 0.5))
+```
+
+Model is run.
+
+```{r}
+logan %>% run(until = 9e4)
+```
+
+Average times.
+
+```{r}
+logan %>% get_mon_arrivals(per_resource = TRUE) %>%
+    mutate(flow_time = end_time - start_time, waiting_time = flow_time - activity_time) %>%
+    group_by(resource) %>%
+    summarise_each(funs(mean), flow_time, activity_time, waiting_time) %>%
+    knitr::kable
+```
+
+### Part 3a of Boarding Pass Problem
+
+#### Recitation 1.5
+
+26. Define a timeout in the Seize
+27. Run the model
+
+```{r}
+customer_csr <- create_trajectory("CSR path") %>%
+    seize("CSR", 1) %>%
+    timeout(function() rtriangle(1, 3, 9, 6)) %>%
+    release("CSR", 1)
+
+customer_kiosk <- create_trajectory("Kiosk path") %>%
+    renege_in(5, customer_csr) %>%
+    seize("Kiosk", 1) %>%
+    renege_abort() %>%
+    timeout(function() rtriangle(1, 0.5, 15, 5)) %>%
+    release("Kiosk", 1)
+
+customer <- create_trajectory("Customer's path") %>%
+    branch(
+        option = function() sample(1:2, 1, prob = c(0.8, 0.2)),
+        continue = c(F, F),
+        customer_kiosk,
+        customer_csr
+    )
+
+logan <-
+    simmer("Logan") %>%
+    add_resource("Kiosk", 6, 16) %>%
+    add_resource("CSR", 2) %>%
+    add_generator("Customer", customer, function() rexp(1, 0.5))
+```
+
+Model is run.
+
+```{r}
+logan %>% run(until = 9e4)
+```
+
+How many people benefited from the redirecting technology?
+
+```{r}
+logan %>% get_mon_arrivals(per_resource = TRUE) %>%
+    mutate(
+        flow_time = end_time - start_time,
+        waiting_time = flow_time - activity_time
+    ) %>%
+    spread(resource, replication) %>%
+    group_by(name) %>%
+    summarise_each(
+        funs(sum(., na.rm = TRUE)),
+        flow_time, activity_time, waiting_time, CSR, Kiosk
+    ) %>%
+    with(., table(CSR, Kiosk)) %>%
+    knitr::kable
+```
+
+### Part 3b of Boarding Pass Problem
+
+28. Define a timeout in the Service
+29. Run the model
