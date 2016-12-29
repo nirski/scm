@@ -1,0 +1,226 @@
+---
+title: "[edX] MITx: CTL.SC0x<br>Supply Chain Analytics"
+---
+
+# Transshipment Problem for Practice
+
+Loading libraries.
+
+```{r}
+library(tidyverse)
+library(ROI)
+library(ROI.plugin.glpk)
+library(ROI.plugin.lpsolve)
+library(ROI.plugin.symphony)
+library(ompr)
+library(ompr.roi)
+```
+
+Defining the variables.
+
+```{r}
+names_w <- c("W1", "W2", "W3", "W4", "W5", "W6")
+names_w <- c("Ngamia1", "Twiga", "Etuko", "Agete", "Amosing", "Ekunyuk")
+names_r <- c("R1", "R2", "R3", "R4")
+names_r <- c("Turkana", "Lamu", "Lokichoggio", "Mandera")
+names_d <- c("D1", "D2", "D3", "D4", "D5")
+names_d <- c("Kampala", "Eldoret", "Moshi", "Kigali", "Bujumbura")
+
+(fixcosts_w <- c(45000, 60000, 44500, 23000, 80000, 15000) %>% set_names(names_w))
+(varcosts_w <- c(500, 450, 600, 630, 550, 700) %>% set_names(names_w))
+(capacity_w <- c(550, 700, 650, 400, 730, 790) %>% set_names(names_w))
+(distance_w_r <- c(
+    200, 430, 276, 320,
+    120, 500, 210, 350,
+    175, 485, 195, 290,
+    245, 410, 300, 199,
+    195, 402, 320, 219,
+     79, 525, 327, 372
+) %>% matrix(nrow = 6, ncol = 4, byrow = TRUE, dimnames = list(names_w, names_r)))
+(varcosts_w_r <- c(
+    195, 365, 325, 275,
+    180, 400, 285, 285,
+    200, 370, 295, 265,
+    245, 350, 310, 255,
+    215, 310, 290, 260,
+    120, 340, 300, 295
+) %>% matrix(nrow = 6, ncol = 4, byrow = TRUE, dimnames = list(names_w, names_r)))
+(fixcosts_r <- c(75000, 55000, 80000, 100000) %>% set_names(names_r))
+(varcosts_r <- c(1000, 700, 800, 1500) %>% set_names(names_r))
+(threshold_r <- c(880, 465, 636, 500) %>% set_names(names_r))
+(capacity_r <- c(1200, 900, 900, 950) %>% set_names(names_r))
+(distance_r_d <- c(
+     780,  320, 1207, 1376, 1505,
+     805,  617,  688, 1108, 1392,
+     695,  505,  998, 1083, 1261,
+     715,  590, 1076,  985, 1084
+) %>% matrix(nrow = 4, ncol = 5, byrow = TRUE, dimnames = list(names_r, names_d)))
+(varcosts_r_d <- c(
+    100, 120,  65,  70,  91,
+     80,  85, 100,  80,  93,
+    110,  75,  90,  75,  89,
+     95, 100,  89,  99, 102
+) %>% matrix(nrow = 4, ncol = 5, byrow = TRUE, dimnames = list(names_r, names_d)))
+(demand_d <- c(250, 475, 389, 400, 361) %>% set_names(names_d))
+```
+
+Defining the model.
+
+```{r}
+model_f <- function() MIPModel() %>% # w - oil well, r - refinery, d - distributor
+    add_variable(x0[w], w = 1:6, type = "binary") %>%
+    add_variable(x[w, r], w = 1:6, r = 1:4, type = "continuous", lb = 0) %>%
+    add_variable(y0[r], r = 1:4, type = "binary") %>%
+    add_variable(y[r, d], r = 1:4, d = 1:5, type = "continuous", lb = 0) %>%
+    set_objective(
+        sum_expr(fixcosts_w[w] * x0[w], w = 1:6) +
+        sum_expr(sum_expr(varcosts_w[w] * x[w, r], r = 1:4), w = 1:6) +
+        sum_expr(distance_w_r[w, r] * varcosts_w_r[w, r] * x[w, r], w = 1:6, r = 1:4) +
+        sum_expr(fixcosts_r[r] * y0[r], r = 1:4) +
+        sum_expr(sum_expr(varcosts_r[r] * x[w, r], w = 1:6), r = 1:4) +
+        sum_expr(distance_r_d[r, d] * varcosts_r_d[r, d] * y[r, d], r = 1:4, d = 1:5),
+        "min"
+    ) %>%
+    # add_constraint(sum_expr(x[w, r], r = 1:4) <= capacity_w[w], w = 1:6) %>%
+    add_constraint(sum_expr(x[w, r], r = 1:4) <= capacity_w[w] * x0[w], w = 1:6) %>%
+    # add_constraint(sum_expr(x[w, r], w = 1:6) <= capacity_r[r], r = 1:4) %>%
+    add_constraint(sum_expr(x[w, r], w = 1:6) <= capacity_r[r] * y0[r], r = 1:4) %>%
+    add_constraint(sum_expr(x[w, r], w = 1:6) >= threshold_r[r] * y0[r], r = 1:4) %>%
+    add_constraint(sum_expr(x[w, r], w = 1:6) == sum_expr(y[r, d], d = 1:5), r = 1:4) %>%
+    add_constraint(sum_expr(y[r, d], r = 1:4) >= demand_d[d], d = 1:5)
+
+(model <- model_f())
+```
+
+Solving the model.
+
+```{r}
+(solution_model <- model %>%
+    solve_model(with_ROI(solver = "lpsolve")))
+    # solve_model(with_ROI(solver = "glpk")))
+    # solve_model(with_ROI(solver = "symphony", verbosity = 1)))
+```
+
+Getting the solutions.
+
+```{r}
+(solution_w <- solution_model %>%
+    get_solution(x0[w]) %>% .$value %>% set_names(names_w))
+
+(solution_w_r <- solution_model %>%
+    get_solution(x[w, r]) %>% .$value %>%
+    matrix(nrow = 6, ncol = 4, byrow = TRUE, dimnames = list(names_w, names_r)))
+
+(solution_r <- solution_model %>%
+    get_solution(y0[r]) %>% .$value %>% set_names(names_r))
+
+(solution_r_d <- solution_model %>%
+    get_solution(y[r, d]) %>% .$value %>%
+    matrix(nrow = 4, ncol = 5, byrow = TRUE, dimnames = list(names_r, names_d)))
+```
+
+Your outbound (refineries to distributors) transportation costs are 144,259,773.00, right?
+
+```{r}
+sum_expr(distance_r_d[r, d] * varcosts_r_d[r, d] * solution_r_d[r, d], r = 1:4, d = 1:5) %>% eval
+```
+
+## 1. In your optimal solution, which oil wells are operational?
+
+```{r}
+# 1
+solution_w
+```
+
+## 2. How many barrels of oil are produced at Amosing well?
+
+```{r}
+# 2
+sum(solution_w_r["Amosing", ])
+```
+
+## 3. In your optimal solution, which refineries are operational?
+
+```{r}
+# 3
+solution_r
+```
+
+## 4. How many barrels of oil are sent to Turkana refinery from Ekunyuk well?
+
+```{r}
+# 4
+solution_w_r["Ekunyuk", "Turkana"]
+```
+
+## 5. How many distributors are served by multiple refineries?
+
+```{r}
+# 5
+solution_r_d
+```
+
+## 6. What is the optimal cost in KES?
+
+```{r}
+# 6
+solution_model %>% objective_value
+```
+
+## 7. What is the average distance (average distance a barrel travels) from refinery to distributor?
+
+```{r}
+# 7
+sum(solution_r_d * distance_r_d)/sum(solution_r_d)
+```
+
+## 8. What would be the marginal change in your optimal solution if the capacity at Agete oil well were to change by 1000 barrels? Give absolute value of the marginal change.
+
+```{r}
+# 8
+tribble(
+    ~capacity_agete, ~objective_value,
+    capacity_w["Agete"],
+        solution_model %>% objective_value,
+    capacity_w["Agete"] <- capacity_w["Agete"] - 1,
+        model_f() %>% solve_model(with_ROI(solver = "lpsolve")) %>% objective_value,
+    capacity_w["Agete"] <- capacity_w["Agete"] + 2,
+        model_f() %>% solve_model(with_ROI(solver = "lpsolve")) %>% objective_value,
+    capacity_w["Agete"] <- capacity_w["Agete"] - 1,
+        model_f() %>% solve_model(with_ROI(solver = "lpsolve")) %>% objective_value
+) %>% mutate(marginal_change = objective_value - first(objective_value))
+```
+
+## 9. Which oil wells and refineries would be operational if Mafuta Poa desired to keep the average distance from refinery to distributor at no more than 800 kms? What would be the total cost?
+
+```{r}
+# 9
+(solution_model_9 <- model_f() %>%
+    add_constraint(sum_expr(y[r, d], r = 1:4) == demand_d[d], d = 1:5) %>%
+    add_constraint(
+        sum_expr(y[r, d] * distance_r_d[r, d], r = 1:4, d = 1:5) <=
+            800 * sum_expr(y[r, d], r = 1:4, d = 1:5)
+    ) %>% solve_model(with_ROI(solver = "lpsolve")))
+solution_model_9 %>%
+    get_solution(x0[w]) %>% .$value %>% set_names(names_w)
+solution_model_9 %>%
+    get_solution(y0[r]) %>% .$value %>% set_names(names_r)
+solution_model_9 %>% objective_value
+(solution_r_d_9 <- solution_model_9 %>%
+    get_solution(y[r, d]) %>% .$value %>%
+    matrix(nrow = 4, ncol = 5, byrow = TRUE, dimnames = list(names_r, names_d)))
+sum(solution_r_d_9 * distance_r_d)/sum(solution_r_d_9)
+```
+
+## 10. To enhance robustness, the COO has now asked for a solution where each distributor is served by at least 2 refineries, neither of which should provide more than 75% of the distributor’s oil. The constraint introduced in question 9 is no longer applicable. What is the total cost of your new optimal solution?
+
+```{r}
+# 10
+(solution_model_10 <- model_f() %>%
+    add_constraint(y[r, d] <= 0.75 * sum_expr(y[r, d], r = 1:4), d = 1:5, r = 1:4) %>%
+    solve_model(with_ROI(solver = "lpsolve")))
+
+(solution_r_d_10 <- solution_model_9 %>%
+    get_solution(y[r, d]) %>% .$value %>%
+    matrix(nrow = 4, ncol = 5, byrow = TRUE, dimnames = list(names_r, names_d)))
+```

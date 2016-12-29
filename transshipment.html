@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<title>[edX] MITx: CTL.SC0x Supply Chain Analytics</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link rel="stylesheet" href="transshipment_files/style.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<section class="page-header">
+<h1 class="title toc-ignore project-name">[edX] MITx: CTL.SC0x<br>Supply Chain Analytics</h1>
+</section>
+
+
+<div id="TOC" class="toc">
+<ul>
+<li><a href="#transshipment-problem-for-practice">Transshipment Problem for Practice</a><ul>
+<li><a href="#in-your-optimal-solution-which-oil-wells-are-operational">1. In your optimal solution, which oil wells are operational?</a></li>
+<li><a href="#how-many-barrels-of-oil-are-produced-at-amosing-well">2. How many barrels of oil are produced at Amosing well?</a></li>
+<li><a href="#in-your-optimal-solution-which-refineries-are-operational">3. In your optimal solution, which refineries are operational?</a></li>
+<li><a href="#how-many-barrels-of-oil-are-sent-to-turkana-refinery-from-ekunyuk-well">4. How many barrels of oil are sent to Turkana refinery from Ekunyuk well?</a></li>
+<li><a href="#how-many-distributors-are-served-by-multiple-refineries">5. How many distributors are served by multiple refineries?</a></li>
+<li><a href="#what-is-the-optimal-cost-in-kes">6. What is the optimal cost in KES?</a></li>
+<li><a href="#what-is-the-average-distance-average-distance-a-barrel-travels-from-refinery-to-distributor">7. What is the average distance (average distance a barrel travels) from refinery to distributor?</a></li>
+<li><a href="#what-would-be-the-marginal-change-in-your-optimal-solution-if-the-capacity-at-agete-oil-well-were-to-change-by-1000-barrels-give-absolute-value-of-the-marginal-change.">8. What would be the marginal change in your optimal solution if the capacity at Agete oil well were to change by 1000 barrels? Give absolute value of the marginal change.</a></li>
+<li><a href="#which-oil-wells-and-refineries-would-be-operational-if-mafuta-poa-desired-to-keep-the-average-distance-from-refinery-to-distributor-at-no-more-than-800-kms-what-would-be-the-total-cost">9. Which oil wells and refineries would be operational if Mafuta Poa desired to keep the average distance from refinery to distributor at no more than 800 kms? What would be the total cost?</a></li>
+<li><a href="#to-enhance-robustness-the-coo-has-now-asked-for-a-solution-where-each-distributor-is-served-by-at-least-2-refineries-neither-of-which-should-provide-more-than-75-of-the-distributors-oil.-the-constraint-introduced-in-question-9-is-no-longer-applicable.-what-is-the-total-cost-of-your-new-optimal-solution">10. To enhance robustness, the COO has now asked for a solution where each distributor is served by at least 2 refineries, neither of which should provide more than 75% of the distributor’s oil. The constraint introduced in question 9 is no longer applicable. What is the total cost of your new optimal solution?</a></li>
+</ul></li>
+</ul>
+</div>
+
+<section class="main-content">
+<div id="transshipment-problem-for-practice" class="section level1">
+<h1>Transshipment Problem for Practice</h1>
+<p>Loading libraries.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)</code></pre></div>
+<pre><code>## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr</code></pre>
+<pre><code>## Conflicts with tidy packages ----------------------------------------------</code></pre>
+<pre><code>## filter(): dplyr, stats
+## lag():    dplyr, stats</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ROI)</code></pre></div>
+<pre><code>## ROI: R Optimization Infrastructure</code></pre>
+<pre><code>## Registered solver plugins: nlminb, glpk, lpsolve, symphony.</code></pre>
+<pre><code>## Default solver: auto.</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ROI.plugin.glpk)
+<span class="kw">library</span>(ROI.plugin.lpsolve)
+<span class="kw">library</span>(ROI.plugin.symphony)
+<span class="kw">library</span>(ompr)
+<span class="kw">library</span>(ompr.roi)</code></pre></div>
+<p>Defining the variables.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">names_w &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;W1&quot;</span>, <span class="st">&quot;W2&quot;</span>, <span class="st">&quot;W3&quot;</span>, <span class="st">&quot;W4&quot;</span>, <span class="st">&quot;W5&quot;</span>, <span class="st">&quot;W6&quot;</span>)
+names_w &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Ngamia1&quot;</span>, <span class="st">&quot;Twiga&quot;</span>, <span class="st">&quot;Etuko&quot;</span>, <span class="st">&quot;Agete&quot;</span>, <span class="st">&quot;Amosing&quot;</span>, <span class="st">&quot;Ekunyuk&quot;</span>)
+names_r &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;R1&quot;</span>, <span class="st">&quot;R2&quot;</span>, <span class="st">&quot;R3&quot;</span>, <span class="st">&quot;R4&quot;</span>)
+names_r &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Turkana&quot;</span>, <span class="st">&quot;Lamu&quot;</span>, <span class="st">&quot;Lokichoggio&quot;</span>, <span class="st">&quot;Mandera&quot;</span>)
+names_d &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;D1&quot;</span>, <span class="st">&quot;D2&quot;</span>, <span class="st">&quot;D3&quot;</span>, <span class="st">&quot;D4&quot;</span>, <span class="st">&quot;D5&quot;</span>)
+names_d &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Kampala&quot;</span>, <span class="st">&quot;Eldoret&quot;</span>, <span class="st">&quot;Moshi&quot;</span>, <span class="st">&quot;Kigali&quot;</span>, <span class="st">&quot;Bujumbura&quot;</span>)
+
+(fixcosts_w &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">45000</span>, <span class="dv">60000</span>, <span class="dv">44500</span>, <span class="dv">23000</span>, <span class="dv">80000</span>, <span class="dv">15000</span>) %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_w))</code></pre></div>
+<pre><code>## Ngamia1   Twiga   Etuko   Agete Amosing Ekunyuk 
+##   45000   60000   44500   23000   80000   15000</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(varcosts_w &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">500</span>, <span class="dv">450</span>, <span class="dv">600</span>, <span class="dv">630</span>, <span class="dv">550</span>, <span class="dv">700</span>) %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_w))</code></pre></div>
+<pre><code>## Ngamia1   Twiga   Etuko   Agete Amosing Ekunyuk 
+##     500     450     600     630     550     700</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(capacity_w &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">550</span>, <span class="dv">700</span>, <span class="dv">650</span>, <span class="dv">400</span>, <span class="dv">730</span>, <span class="dv">790</span>) %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_w))</code></pre></div>
+<pre><code>## Ngamia1   Twiga   Etuko   Agete Amosing Ekunyuk 
+##     550     700     650     400     730     790</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(distance_w_r &lt;-<span class="st"> </span><span class="kw">c</span>(
+    <span class="dv">200</span>, <span class="dv">430</span>, <span class="dv">276</span>, <span class="dv">320</span>,
+    <span class="dv">120</span>, <span class="dv">500</span>, <span class="dv">210</span>, <span class="dv">350</span>,
+    <span class="dv">175</span>, <span class="dv">485</span>, <span class="dv">195</span>, <span class="dv">290</span>,
+    <span class="dv">245</span>, <span class="dv">410</span>, <span class="dv">300</span>, <span class="dv">199</span>,
+    <span class="dv">195</span>, <span class="dv">402</span>, <span class="dv">320</span>, <span class="dv">219</span>,
+     <span class="dv">79</span>, <span class="dv">525</span>, <span class="dv">327</span>, <span class="dv">372</span>
+) %&gt;%<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">6</span>, <span class="dt">ncol =</span> <span class="dv">4</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(names_w, names_r)))</code></pre></div>
+<pre><code>##         Turkana Lamu Lokichoggio Mandera
+## Ngamia1     200  430         276     320
+## Twiga       120  500         210     350
+## Etuko       175  485         195     290
+## Agete       245  410         300     199
+## Amosing     195  402         320     219
+## Ekunyuk      79  525         327     372</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(varcosts_w_r &lt;-<span class="st"> </span><span class="kw">c</span>(
+    <span class="dv">195</span>, <span class="dv">365</span>, <span class="dv">325</span>, <span class="dv">275</span>,
+    <span class="dv">180</span>, <span class="dv">400</span>, <span class="dv">285</span>, <span class="dv">285</span>,
+    <span class="dv">200</span>, <span class="dv">370</span>, <span class="dv">295</span>, <span class="dv">265</span>,
+    <span class="dv">245</span>, <span class="dv">350</span>, <span class="dv">310</span>, <span class="dv">255</span>,
+    <span class="dv">215</span>, <span class="dv">310</span>, <span class="dv">290</span>, <span class="dv">260</span>,
+    <span class="dv">120</span>, <span class="dv">340</span>, <span class="dv">300</span>, <span class="dv">295</span>
+) %&gt;%<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">6</span>, <span class="dt">ncol =</span> <span class="dv">4</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(names_w, names_r)))</code></pre></div>
+<pre><code>##         Turkana Lamu Lokichoggio Mandera
+## Ngamia1     195  365         325     275
+## Twiga       180  400         285     285
+## Etuko       200  370         295     265
+## Agete       245  350         310     255
+## Amosing     215  310         290     260
+## Ekunyuk     120  340         300     295</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(fixcosts_r &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">75000</span>, <span class="dv">55000</span>, <span class="dv">80000</span>, <span class="dv">100000</span>) %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_r))</code></pre></div>
+<pre><code>##     Turkana        Lamu Lokichoggio     Mandera 
+##       75000       55000       80000      100000</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(varcosts_r &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1000</span>, <span class="dv">700</span>, <span class="dv">800</span>, <span class="dv">1500</span>) %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_r))</code></pre></div>
+<pre><code>##     Turkana        Lamu Lokichoggio     Mandera 
+##        1000         700         800        1500</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(threshold_r &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">880</span>, <span class="dv">465</span>, <span class="dv">636</span>, <span class="dv">500</span>) %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_r))</code></pre></div>
+<pre><code>##     Turkana        Lamu Lokichoggio     Mandera 
+##         880         465         636         500</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(capacity_r &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1200</span>, <span class="dv">900</span>, <span class="dv">900</span>, <span class="dv">950</span>) %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_r))</code></pre></div>
+<pre><code>##     Turkana        Lamu Lokichoggio     Mandera 
+##        1200         900         900         950</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(distance_r_d &lt;-<span class="st"> </span><span class="kw">c</span>(
+     <span class="dv">780</span>,  <span class="dv">320</span>, <span class="dv">1207</span>, <span class="dv">1376</span>, <span class="dv">1505</span>,
+     <span class="dv">805</span>,  <span class="dv">617</span>,  <span class="dv">688</span>, <span class="dv">1108</span>, <span class="dv">1392</span>,
+     <span class="dv">695</span>,  <span class="dv">505</span>,  <span class="dv">998</span>, <span class="dv">1083</span>, <span class="dv">1261</span>,
+     <span class="dv">715</span>,  <span class="dv">590</span>, <span class="dv">1076</span>,  <span class="dv">985</span>, <span class="dv">1084</span>
+) %&gt;%<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">4</span>, <span class="dt">ncol =</span> <span class="dv">5</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(names_r, names_d)))</code></pre></div>
+<pre><code>##             Kampala Eldoret Moshi Kigali Bujumbura
+## Turkana         780     320  1207   1376      1505
+## Lamu            805     617   688   1108      1392
+## Lokichoggio     695     505   998   1083      1261
+## Mandera         715     590  1076    985      1084</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(varcosts_r_d &lt;-<span class="st"> </span><span class="kw">c</span>(
+    <span class="dv">100</span>, <span class="dv">120</span>,  <span class="dv">65</span>,  <span class="dv">70</span>,  <span class="dv">91</span>,
+     <span class="dv">80</span>,  <span class="dv">85</span>, <span class="dv">100</span>,  <span class="dv">80</span>,  <span class="dv">93</span>,
+    <span class="dv">110</span>,  <span class="dv">75</span>,  <span class="dv">90</span>,  <span class="dv">75</span>,  <span class="dv">89</span>,
+     <span class="dv">95</span>, <span class="dv">100</span>,  <span class="dv">89</span>,  <span class="dv">99</span>, <span class="dv">102</span>
+) %&gt;%<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">4</span>, <span class="dt">ncol =</span> <span class="dv">5</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(names_r, names_d)))</code></pre></div>
+<pre><code>##             Kampala Eldoret Moshi Kigali Bujumbura
+## Turkana         100     120    65     70        91
+## Lamu             80      85   100     80        93
+## Lokichoggio     110      75    90     75        89
+## Mandera          95     100    89     99       102</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(demand_d &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">250</span>, <span class="dv">475</span>, <span class="dv">389</span>, <span class="dv">400</span>, <span class="dv">361</span>) %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_d))</code></pre></div>
+<pre><code>##   Kampala   Eldoret     Moshi    Kigali Bujumbura 
+##       250       475       389       400       361</code></pre>
+<p>Defining the model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model_f &lt;-<span class="st"> </span>function() <span class="kw">MIPModel</span>() %&gt;%<span class="st"> </span><span class="co"># w - oil well, r - refinery, d - distributor</span>
+<span class="st">    </span><span class="kw">add_variable</span>(x0[w], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>, <span class="dt">type =</span> <span class="st">&quot;binary&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_variable</span>(x[w, r], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>, <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>, <span class="dt">type =</span> <span class="st">&quot;continuous&quot;</span>, <span class="dt">lb =</span> <span class="dv">0</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_variable</span>(y0[r], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>, <span class="dt">type =</span> <span class="st">&quot;binary&quot;</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_variable</span>(y[r, d], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>, <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>, <span class="dt">type =</span> <span class="st">&quot;continuous&quot;</span>, <span class="dt">lb =</span> <span class="dv">0</span>) %&gt;%
+<span class="st">    </span><span class="kw">set_objective</span>(
+        <span class="kw">sum_expr</span>(fixcosts_w[w] *<span class="st"> </span>x0[w], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>) +
+<span class="st">        </span><span class="kw">sum_expr</span>(<span class="kw">sum_expr</span>(varcosts_w[w] *<span class="st"> </span>x[w, r], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>), <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>) +
+<span class="st">        </span><span class="kw">sum_expr</span>(distance_w_r[w, r] *<span class="st"> </span>varcosts_w_r[w, r] *<span class="st"> </span>x[w, r], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>, <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) +
+<span class="st">        </span><span class="kw">sum_expr</span>(fixcosts_r[r] *<span class="st"> </span>y0[r], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) +
+<span class="st">        </span><span class="kw">sum_expr</span>(<span class="kw">sum_expr</span>(varcosts_r[r] *<span class="st"> </span>x[w, r], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>), <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) +
+<span class="st">        </span><span class="kw">sum_expr</span>(distance_r_d[r, d] *<span class="st"> </span>varcosts_r_d[r, d] *<span class="st"> </span>y[r, d], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>, <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>),
+        <span class="st">&quot;min&quot;</span>
+    ) %&gt;%
+<span class="st">    </span><span class="co"># add_constraint(sum_expr(x[w, r], r = 1:4) &lt;= capacity_w[w], w = 1:6) %&gt;%</span>
+<span class="st">    </span><span class="kw">add_constraint</span>(<span class="kw">sum_expr</span>(x[w, r], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) &lt;=<span class="st"> </span>capacity_w[w] *<span class="st"> </span>x0[w], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>) %&gt;%
+<span class="st">    </span><span class="co"># add_constraint(sum_expr(x[w, r], w = 1:6) &lt;= capacity_r[r], r = 1:4) %&gt;%</span>
+<span class="st">    </span><span class="kw">add_constraint</span>(<span class="kw">sum_expr</span>(x[w, r], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>) &lt;=<span class="st"> </span>capacity_r[r] *<span class="st"> </span>y0[r], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_constraint</span>(<span class="kw">sum_expr</span>(x[w, r], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>) &gt;=<span class="st"> </span>threshold_r[r] *<span class="st"> </span>y0[r], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_constraint</span>(<span class="kw">sum_expr</span>(x[w, r], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>) ==<span class="st"> </span><span class="kw">sum_expr</span>(y[r, d], <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>), <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_constraint</span>(<span class="kw">sum_expr</span>(y[r, d], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) &gt;=<span class="st"> </span>demand_d[d], <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>)
+
+(model &lt;-<span class="st"> </span><span class="kw">model_f</span>())</code></pre></div>
+<pre><code>## Mixed linear integer optimization problem
+## Variables:
+##   Continuous: 44 
+##   Integer: 0 
+##   Binary: 10 
+## Search direction: minimize 
+## Constraints: 23</code></pre>
+<p>Solving the model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(solution_model &lt;-<span class="st"> </span>model %&gt;%
+<span class="st">    </span><span class="kw">solve_model</span>(<span class="kw">with_ROI</span>(<span class="dt">solver =</span> <span class="st">&quot;lpsolve&quot;</span>)))</code></pre></div>
+<pre><code>## Status: optimal
+## Objective value: 200267723</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">    <span class="co"># solve_model(with_ROI(solver = &quot;glpk&quot;)))</span>
+    <span class="co"># solve_model(with_ROI(solver = &quot;symphony&quot;, verbosity = 1)))</span></code></pre></div>
+<p>Getting the solutions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(solution_w &lt;-<span class="st"> </span>solution_model %&gt;%
+<span class="st">    </span><span class="kw">get_solution</span>(x0[w]) %&gt;%<span class="st"> </span>.$value %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_w))</code></pre></div>
+<pre><code>## Ngamia1   Twiga   Etuko   Agete Amosing Ekunyuk 
+##       0       1       0       1       1       1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(solution_w_r &lt;-<span class="st"> </span>solution_model %&gt;%
+<span class="st">    </span><span class="kw">get_solution</span>(x[w, r]) %&gt;%<span class="st"> </span>.$value %&gt;%
+<span class="st">    </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">6</span>, <span class="dt">ncol =</span> <span class="dv">4</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(names_w, names_r)))</code></pre></div>
+<pre><code>##         Turkana Lamu Lokichoggio Mandera
+## Ngamia1       0    0           0       0
+## Twiga       410    0           0       0
+## Etuko         0    0           0       0
+## Agete         0    0           0     400
+## Amosing       0    0           0     275
+## Ekunyuk     790    0           0       0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(solution_r &lt;-<span class="st"> </span>solution_model %&gt;%
+<span class="st">    </span><span class="kw">get_solution</span>(y0[r]) %&gt;%<span class="st"> </span>.$value %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_r))</code></pre></div>
+<pre><code>##     Turkana        Lamu Lokichoggio     Mandera 
+##           1           0           0           1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(solution_r_d &lt;-<span class="st"> </span>solution_model %&gt;%
+<span class="st">    </span><span class="kw">get_solution</span>(y[r, d]) %&gt;%<span class="st"> </span>.$value %&gt;%
+<span class="st">    </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">4</span>, <span class="dt">ncol =</span> <span class="dv">5</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(names_r, names_d)))</code></pre></div>
+<pre><code>##             Kampala Eldoret Moshi Kigali Bujumbura
+## Turkana           0     475   389    336         0
+## Lamu              0       0     0      0         0
+## Lokichoggio       0       0     0      0         0
+## Mandera         250       0     0     64       361</code></pre>
+<p>Your outbound (refineries to distributors) transportation costs are 144,259,773.00, right?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum_expr</span>(distance_r_d[r, d] *<span class="st"> </span>varcosts_r_d[r, d] *<span class="st"> </span>solution_r_d[r, d], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>, <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>) %&gt;%<span class="st"> </span>eval</code></pre></div>
+<pre><code>## [1] 144259773</code></pre>
+<div id="in-your-optimal-solution-which-oil-wells-are-operational" class="section level2">
+<h2>1. In your optimal solution, which oil wells are operational?</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 1</span>
+solution_w</code></pre></div>
+<pre><code>## Ngamia1   Twiga   Etuko   Agete Amosing Ekunyuk 
+##       0       1       0       1       1       1</code></pre>
+</div>
+<div id="how-many-barrels-of-oil-are-produced-at-amosing-well" class="section level2">
+<h2>2. How many barrels of oil are produced at Amosing well?</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 2</span>
+<span class="kw">sum</span>(solution_w_r[<span class="st">&quot;Amosing&quot;</span>, ])</code></pre></div>
+<pre><code>## [1] 275</code></pre>
+</div>
+<div id="in-your-optimal-solution-which-refineries-are-operational" class="section level2">
+<h2>3. In your optimal solution, which refineries are operational?</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 3</span>
+solution_r</code></pre></div>
+<pre><code>##     Turkana        Lamu Lokichoggio     Mandera 
+##           1           0           0           1</code></pre>
+</div>
+<div id="how-many-barrels-of-oil-are-sent-to-turkana-refinery-from-ekunyuk-well" class="section level2">
+<h2>4. How many barrels of oil are sent to Turkana refinery from Ekunyuk well?</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 4</span>
+solution_w_r[<span class="st">&quot;Ekunyuk&quot;</span>, <span class="st">&quot;Turkana&quot;</span>]</code></pre></div>
+<pre><code>## [1] 790</code></pre>
+</div>
+<div id="how-many-distributors-are-served-by-multiple-refineries" class="section level2">
+<h2>5. How many distributors are served by multiple refineries?</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 5</span>
+solution_r_d</code></pre></div>
+<pre><code>##             Kampala Eldoret Moshi Kigali Bujumbura
+## Turkana           0     475   389    336         0
+## Lamu              0       0     0      0         0
+## Lokichoggio       0       0     0      0         0
+## Mandera         250       0     0     64       361</code></pre>
+</div>
+<div id="what-is-the-optimal-cost-in-kes" class="section level2">
+<h2>6. What is the optimal cost in KES?</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 6</span>
+solution_model %&gt;%<span class="st"> </span>objective_value</code></pre></div>
+<pre><code>## [1] 200267723</code></pre>
+</div>
+<div id="what-is-the-average-distance-average-distance-a-barrel-travels-from-refinery-to-distributor" class="section level2">
+<h2>7. What is the average distance (average distance a barrel travels) from refinery to distributor?</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 7</span>
+<span class="kw">sum</span>(solution_r_d *<span class="st"> </span>distance_r_d)/<span class="kw">sum</span>(solution_r_d)</code></pre></div>
+<pre><code>## [1] 915.7189</code></pre>
+</div>
+<div id="what-would-be-the-marginal-change-in-your-optimal-solution-if-the-capacity-at-agete-oil-well-were-to-change-by-1000-barrels-give-absolute-value-of-the-marginal-change." class="section level2">
+<h2>8. What would be the marginal change in your optimal solution if the capacity at Agete oil well were to change by 1000 barrels? Give absolute value of the marginal change.</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 8</span>
+<span class="kw">tribble</span>(
+    ~capacity_agete, ~objective_value,
+    capacity_w[<span class="st">&quot;Agete&quot;</span>],
+        solution_model %&gt;%<span class="st"> </span>objective_value,
+    capacity_w[<span class="st">&quot;Agete&quot;</span>] &lt;-<span class="st"> </span>capacity_w[<span class="st">&quot;Agete&quot;</span>] -<span class="st"> </span><span class="dv">1</span>,
+        <span class="kw">model_f</span>() %&gt;%<span class="st"> </span><span class="kw">solve_model</span>(<span class="kw">with_ROI</span>(<span class="dt">solver =</span> <span class="st">&quot;lpsolve&quot;</span>)) %&gt;%<span class="st"> </span>objective_value,
+    capacity_w[<span class="st">&quot;Agete&quot;</span>] &lt;-<span class="st"> </span>capacity_w[<span class="st">&quot;Agete&quot;</span>] +<span class="st"> </span><span class="dv">2</span>,
+        <span class="kw">model_f</span>() %&gt;%<span class="st"> </span><span class="kw">solve_model</span>(<span class="kw">with_ROI</span>(<span class="dt">solver =</span> <span class="st">&quot;lpsolve&quot;</span>)) %&gt;%<span class="st"> </span>objective_value,
+    capacity_w[<span class="st">&quot;Agete&quot;</span>] &lt;-<span class="st"> </span>capacity_w[<span class="st">&quot;Agete&quot;</span>] -<span class="st"> </span><span class="dv">1</span>,
+        <span class="kw">model_f</span>() %&gt;%<span class="st"> </span><span class="kw">solve_model</span>(<span class="kw">with_ROI</span>(<span class="dt">solver =</span> <span class="st">&quot;lpsolve&quot;</span>)) %&gt;%<span class="st"> </span>objective_value
+) %&gt;%<span class="st"> </span><span class="kw">mutate</span>(<span class="dt">marginal_change =</span> objective_value -<span class="st"> </span><span class="kw">first</span>(objective_value))</code></pre></div>
+<pre><code>## # A tibble: 4 × 3
+##   capacity_agete objective_value marginal_change
+##            &lt;dbl&gt;           &lt;dbl&gt;           &lt;dbl&gt;
+## 1            400       200267723               0
+## 2            399       200273838            6115
+## 3            401       200261608           -6115
+## 4            400       200267723               0</code></pre>
+</div>
+<div id="which-oil-wells-and-refineries-would-be-operational-if-mafuta-poa-desired-to-keep-the-average-distance-from-refinery-to-distributor-at-no-more-than-800-kms-what-would-be-the-total-cost" class="section level2">
+<h2>9. Which oil wells and refineries would be operational if Mafuta Poa desired to keep the average distance from refinery to distributor at no more than 800 kms? What would be the total cost?</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 9</span>
+(solution_model_9 &lt;-<span class="st"> </span><span class="kw">model_f</span>() %&gt;%
+<span class="st">    </span><span class="kw">add_constraint</span>(<span class="kw">sum_expr</span>(y[r, d], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) ==<span class="st"> </span>demand_d[d], <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>) %&gt;%
+<span class="st">    </span><span class="kw">add_constraint</span>(
+        <span class="kw">sum_expr</span>(y[r, d] *<span class="st"> </span>distance_r_d[r, d], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>, <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>) &lt;=
+<span class="st">            </span><span class="dv">800</span> *<span class="st"> </span><span class="kw">sum_expr</span>(y[r, d], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>, <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>)
+    ) %&gt;%<span class="st"> </span><span class="kw">solve_model</span>(<span class="kw">with_ROI</span>(<span class="dt">solver =</span> <span class="st">&quot;lpsolve&quot;</span>)))</code></pre></div>
+<pre><code>## Status: optimal
+## Objective value: 239478673</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">solution_model_9 %&gt;%
+<span class="st">    </span><span class="kw">get_solution</span>(x0[w]) %&gt;%<span class="st"> </span>.$value %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_w)</code></pre></div>
+<pre><code>## Ngamia1   Twiga   Etuko   Agete Amosing Ekunyuk 
+##       0       1       0       1       1       1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">solution_model_9 %&gt;%
+<span class="st">    </span><span class="kw">get_solution</span>(y0[r]) %&gt;%<span class="st"> </span>.$value %&gt;%<span class="st"> </span><span class="kw">set_names</span>(names_r)</code></pre></div>
+<pre><code>##     Turkana        Lamu Lokichoggio     Mandera 
+##           1           1           0           1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">solution_model_9 %&gt;%<span class="st"> </span>objective_value</code></pre></div>
+<pre><code>## [1] 239478673</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(solution_r_d_9 &lt;-<span class="st"> </span>solution_model_9 %&gt;%
+<span class="st">    </span><span class="kw">get_solution</span>(y[r, d]) %&gt;%<span class="st"> </span>.$value %&gt;%
+<span class="st">    </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">4</span>, <span class="dt">ncol =</span> <span class="dv">5</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(names_r, names_d)))</code></pre></div>
+<pre><code>##               Kampala Eldoret Moshi    Kigali Bujumbura
+## Turkana     193.67791     475     0 241.32209         0
+## Lamu          0.00000       0   389  76.00000         0
+## Lokichoggio   0.00000       0     0   0.00000         0
+## Mandera      56.32209       0     0  82.67791       361</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(solution_r_d_9 *<span class="st"> </span>distance_r_d)/<span class="kw">sum</span>(solution_r_d_9)</code></pre></div>
+<pre><code>## [1] 800</code></pre>
+</div>
+<div id="to-enhance-robustness-the-coo-has-now-asked-for-a-solution-where-each-distributor-is-served-by-at-least-2-refineries-neither-of-which-should-provide-more-than-75-of-the-distributors-oil.-the-constraint-introduced-in-question-9-is-no-longer-applicable.-what-is-the-total-cost-of-your-new-optimal-solution" class="section level2">
+<h2>10. To enhance robustness, the COO has now asked for a solution where each distributor is served by at least 2 refineries, neither of which should provide more than 75% of the distributor’s oil. The constraint introduced in question 9 is no longer applicable. What is the total cost of your new optimal solution?</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 10</span>
+(solution_model_10 &lt;-<span class="st"> </span><span class="kw">model_f</span>() %&gt;%
+<span class="st">    </span><span class="kw">add_constraint</span>(y[r, d] &lt;=<span class="st"> </span><span class="fl">0.75</span> *<span class="st"> </span><span class="kw">sum_expr</span>(y[r, d], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>), <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>, <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) %&gt;%
+<span class="st">    </span><span class="kw">solve_model</span>(<span class="kw">with_ROI</span>(<span class="dt">solver =</span> <span class="st">&quot;lpsolve&quot;</span>)))</code></pre></div>
+<pre><code>## Status: optimal
+## Objective value: 206966967</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(solution_r_d_10 &lt;-<span class="st"> </span>solution_model_9 %&gt;%
+<span class="st">    </span><span class="kw">get_solution</span>(y[r, d]) %&gt;%<span class="st"> </span>.$value %&gt;%
+<span class="st">    </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> <span class="dv">4</span>, <span class="dt">ncol =</span> <span class="dv">5</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(names_r, names_d)))</code></pre></div>
+<pre><code>##               Kampala Eldoret Moshi    Kigali Bujumbura
+## Turkana     193.67791     475     0 241.32209         0
+## Lamu          0.00000       0   389  76.00000         0
+## Lokichoggio   0.00000       0     0   0.00000         0
+## Mandera      56.32209       0     0  82.67791       361</code></pre>
+</div>
+</div>
+</section>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

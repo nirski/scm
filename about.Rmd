@@ -1,5 +1,0 @@
----
-title: "[edX] MITx: CTL.SC0x<br>Supply Chain Analytics"
----
-
-More about this website.
