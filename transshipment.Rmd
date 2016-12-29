@@ -67,7 +67,8 @@ names_d <- c("Kampala", "Eldoret", "Moshi", "Kigali", "Bujumbura")
 Defining the model.
 
 ```{r}
-model_f <- function() MIPModel() %>% # w - oil well, r - refinery, d - distributor
+# w - oil well 1:6, r - refinery 1:4, d - distributor 1:5
+model_f <- function() MIPModel() %>%
     add_variable(x0[w], w = 1:6, type = "binary") %>%
     add_variable(x[w, r], w = 1:6, r = 1:4, type = "continuous", lb = 0) %>%
     add_variable(y0[r], r = 1:4, type = "binary") %>%
@@ -217,10 +218,26 @@ sum(solution_r_d_9 * distance_r_d)/sum(solution_r_d_9)
 ```{r}
 # 10
 (solution_model_10 <- model_f() %>%
-    add_constraint(y[r, d] <= 0.75 * sum_expr(y[r, d], r = 1:4), d = 1:5, r = 1:4) %>%
+    # add_constraint(sum_expr(sign(y[r, d]), r = 1:4) >= 2, d = 1:5) %>%
+    # add_constraint(y[r, d] <= 0.75 * sum_expr(y[r, d], r = 1:4), d = 1:5, r = 1:4) %>%
+    add_constraint(y[r, d] / demand_d[d] <= 0.75, d = 1:5, r = 1:4) %>%
     solve_model(with_ROI(solver = "lpsolve")))
 
 (solution_r_d_10 <- solution_model_9 %>%
     get_solution(y[r, d]) %>% .$value %>%
     matrix(nrow = 4, ncol = 5, byrow = TRUE, dimnames = list(names_r, names_d)))
+
+# divide solution_r_d_10 row-wise by demand_d - 3 methods:
+t(t(solution_r_d_10)/demand_d)
+sweep(solution_r_d_10, MARGIN = 2, demand_d, `/`)
+solution_r_d_10 %*% diag(1/demand_d)
+
+# solution_r_d_10 %>%
+#     as.data.frame %>%
+#     rownames_to_column %>%
+#     gather(key, value, -rowname) %>%
+#     group_by(key) %>%
+#     mutate(part = value/sum(value)) %>%
+#     select(-value) %>%
+#     spread(key, part)
 ```

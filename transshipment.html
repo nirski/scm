@@ -196,7 +196,8 @@ names_d &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st"
 <pre><code>##   Kampala   Eldoret     Moshi    Kigali Bujumbura 
 ##       250       475       389       400       361</code></pre>
 <p>Defining the model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model_f &lt;-<span class="st"> </span>function() <span class="kw">MIPModel</span>() %&gt;%<span class="st"> </span><span class="co"># w - oil well, r - refinery, d - distributor</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># w - oil well 1:6, r - refinery 1:4, d - distributor 1:5</span>
+model_f &lt;-<span class="st"> </span>function() <span class="kw">MIPModel</span>() %&gt;%
 <span class="st">    </span><span class="kw">add_variable</span>(x0[w], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>, <span class="dt">type =</span> <span class="st">&quot;binary&quot;</span>) %&gt;%
 <span class="st">    </span><span class="kw">add_variable</span>(x[w, r], <span class="dt">w =</span> <span class="dv">1</span>:<span class="dv">6</span>, <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>, <span class="dt">type =</span> <span class="st">&quot;continuous&quot;</span>, <span class="dt">lb =</span> <span class="dv">0</span>) %&gt;%
 <span class="st">    </span><span class="kw">add_variable</span>(y0[r], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>, <span class="dt">type =</span> <span class="st">&quot;binary&quot;</span>) %&gt;%
@@ -369,7 +370,9 @@ solution_model %&gt;%<span class="st"> </span>objective_value</code></pre></div>
 <h2>10. To enhance robustness, the COO has now asked for a solution where each distributor is served by at least 2 refineries, neither of which should provide more than 75% of the distributor’s oil. The constraint introduced in question 9 is no longer applicable. What is the total cost of your new optimal solution?</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 10</span>
 (solution_model_10 &lt;-<span class="st"> </span><span class="kw">model_f</span>() %&gt;%
-<span class="st">    </span><span class="kw">add_constraint</span>(y[r, d] &lt;=<span class="st"> </span><span class="fl">0.75</span> *<span class="st"> </span><span class="kw">sum_expr</span>(y[r, d], <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>), <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>, <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) %&gt;%
+<span class="st">    </span><span class="co"># add_constraint(sum_expr(sign(y[r, d]), r = 1:4) &gt;= 2, d = 1:5) %&gt;%</span>
+<span class="st">    </span><span class="co"># add_constraint(y[r, d] &lt;= 0.75 * sum_expr(y[r, d], r = 1:4), d = 1:5, r = 1:4) %&gt;%</span>
+<span class="st">    </span><span class="kw">add_constraint</span>(y[r, d] /<span class="st"> </span>demand_d[d] &lt;=<span class="st"> </span><span class="fl">0.75</span>, <span class="dt">d =</span> <span class="dv">1</span>:<span class="dv">5</span>, <span class="dt">r =</span> <span class="dv">1</span>:<span class="dv">4</span>) %&gt;%
 <span class="st">    </span><span class="kw">solve_model</span>(<span class="kw">with_ROI</span>(<span class="dt">solver =</span> <span class="st">&quot;lpsolve&quot;</span>)))</code></pre></div>
 <pre><code>## Status: optimal
 ## Objective value: 206966967</code></pre>
@@ -381,6 +384,33 @@ solution_model %&gt;%<span class="st"> </span>objective_value</code></pre></div>
 ## Lamu          0.00000       0   389  76.00000         0
 ## Lokichoggio   0.00000       0     0   0.00000         0
 ## Mandera      56.32209       0     0  82.67791       361</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># divide solution_r_d_10 row-wise by demand_d - 3 methods:</span>
+<span class="kw">t</span>(<span class="kw">t</span>(solution_r_d_10)/demand_d)</code></pre></div>
+<pre><code>##               Kampala Eldoret Moshi    Kigali Bujumbura
+## Turkana     0.7747117       1     0 0.6033052         0
+## Lamu        0.0000000       0     1 0.1900000         0
+## Lokichoggio 0.0000000       0     0 0.0000000         0
+## Mandera     0.2252883       0     0 0.2066948         1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sweep</span>(solution_r_d_10, <span class="dt">MARGIN =</span> <span class="dv">2</span>, demand_d, <span class="st">`</span><span class="dt">/</span><span class="st">`</span>)</code></pre></div>
+<pre><code>##               Kampala Eldoret Moshi    Kigali Bujumbura
+## Turkana     0.7747117       1     0 0.6033052         0
+## Lamu        0.0000000       0     1 0.1900000         0
+## Lokichoggio 0.0000000       0     0 0.0000000         0
+## Mandera     0.2252883       0     0 0.2066948         1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">solution_r_d_10 %*%<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>/demand_d)</code></pre></div>
+<pre><code>##                  [,1] [,2] [,3]      [,4] [,5]
+## Turkana     0.7747117    1    0 0.6033052    0
+## Lamu        0.0000000    0    1 0.1900000    0
+## Lokichoggio 0.0000000    0    0 0.0000000    0
+## Mandera     0.2252883    0    0 0.2066948    1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># solution_r_d_10 %&gt;%</span>
+<span class="co">#     as.data.frame %&gt;%</span>
+<span class="co">#     rownames_to_column %&gt;%</span>
+<span class="co">#     gather(key, value, -rowname) %&gt;%</span>
+<span class="co">#     group_by(key) %&gt;%</span>
+<span class="co">#     mutate(part = value/sum(value)) %&gt;%</span>
+<span class="co">#     select(-value) %&gt;%</span>
+<span class="co">#     spread(key, part)</span></code></pre></div>
 </div>
 </div>
 </section>
